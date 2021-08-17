@@ -1,0 +1,124 @@
+[[[7, 1], [5, 2]], [[0, 6], [2, 5]], [[5, 2], [7, 1]], [[2, 5], [0, 6]], [[7, 1], [5, 2]], [[0, 6], [2, 5]], [[5, 2], [7, 1]], [[2, 5], [0, 6]]]
+
+
+zapisywanie rozpatrywanych wariantów i korzystanie z nich przy kolejnym ruchu
+    połączenie mata i pata (dla wydajności)
+    poprawić nazwy w engine.py
+    jeśli silnik znajdzie mata w więcej niż jednym ma go od razu wykonywać
+7min
+#1	♜	♞	♝	♛	♚	♝	♞	♜
+#2	♟	♟	♟	♟	♟	♟	♟	♟
+#3
+#4
+#5
+#6
+#7	♙	♙	♙	♙	♙	♙	♙	♙
+#8	♖	♘	♗	♕	♔	♗	♘	♖
+#   h	g	f	e	d	c	b	a
+
+[[[6, 4], [4, 4]], [[1, 6], [2, 6]], [[7, 3], [5, 5]], [[0, 5], [1, 6]], [[7, 5], [4, 2]], [[1, 4], [2, 4]], [[7, 6], [5, 7]]]
+ a	b	c	d	e	f	g	h
+8  	⬛	□	⬛	□	⬛	□	⬛	□	8
+7  	□	⬛	□	⬛	□	⬛	□	⬛	7
+6  	⬛	□	⬛	□	⬛	□	⬛	□	6
+5  	□	⬛	□	⬛	□	⬛	□	⬛	5
+4  	⬛	□	⬛	□	♔	□	⬛	□	4
+3  	□	⬛	♛	⬛	□	⬛	□	⬛	3
+2  	⬛	□	⬛	♙	⬛	□	⬛	□	2
+1  	□	⬛	□	♚	□	⬛	□	⬛	1
+    a	b	c	d	e	f	g	h
+
+
+
+
+wartość piona 2
+remis przez trzykrotne powtórzenie pozycji
+silnik1 - biały
+silnik2 - czarny
+Silnik1: d2 e1
+
+Biały 49.19% : 50.79% Czarny
+
+    A	B	C	D	E	F	G	H
+8	♖	□	♕	□	♔	□	⬛	♖	8
+7	♗	♙	♙	⬛	□	♙	♙	♗	7
+6	♙	□	♘	□	⬛	♘	⬛	♙	6
+5	♟	⬛	□	♙	♙	⬛	□	♟	5
+4	⬛	□	⬛	□	⬛	□	⬛	□	4
+3	□	⬛	□	♟	♟	♟	♞	⬛	3
+2	⬛	♟	♟	□	♚	□	♟	□	2
+1	♜	♞	□	♛	♝	♝	□	♜	1
+    A	B	C	D	E	F	G	H
+
+Silnik2: e6 c8
+
+Biały 48.67% : 51.32% Czarny
+
+
+
+wartość piona 3
+remis przez trzykrotne powtórzenie pozycji
+silnik1 - czarny
+silnik2 - biały
+
+wartość piona 3
+remis przez trzykrotne powtórzenie pozycji
+silnik1 - biały
+silnik2 - czarny
+Silnik1: h1 g1
+
+Biały 58.02% : 41.97% Czarny
+
+    A	B	C	D	E	F	G	H
+8	⬛	□	♖	□	⬛	□	⬛	□	8
+7	♙	⬛	□	♔	□	⬛	□	⬛	7
+6	⬛	♙	⬛	□	♙	♙	⬛	♙	6
+5	□	⬛	□	♙	□	⬛	♙	⬛	5
+4	♕	□	♙	□	⬛	□	♟	□	4
+3	♝	⬛	♟	⬛	□	⬛	□	♟	3
+2	♝	♛	⬛	□	⬛	□	⬛	□	2
+1	♜	♞	□	⬛	♜	⬛	♚	⬛	1
+    A	B	C	D	E	F	G	H
+
+Silnik2: c6 c8
+
+Biały 50.36% : 49.63% Czarny
+
+
+
+
+
+
+orginał
+1. 3min 35s
+2. 3min 40s
+
+skrócone konie
+1. 3min 36s
+2. 3min 35s
+
+bardzo skrócone gońce
+1. 4min 19s
+2. 4min 17s
+
+trochę skrócone gońce
+1. 3min 33s
+2. 3min 30s
+
+
+3. 3min 46s
+4. 3min 47s
+
+bardzo skrócone wieże
+1. 4min 11s
+
+trochę skrócone wieże
+1. 3min 42s
+2. 3min 40s
+
+
+1. 3min 39s
+2. 3min 39s
+
+
+1godz 40min

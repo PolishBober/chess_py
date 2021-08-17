@@ -1,0 +1,539 @@
+stare sprawdzanie czy nie ma mata/pata
+#
+
+                        #if level == 0:
+                        #    if promotions == 1:
+                        #        punctation.append([[piece, move], []])
+                        #    else:
+                        #        punctation.append([[piece, move + [['N', 'B', 'R', 'Q'][promotion]]], []])
+#
+                        #    if chess_assistance.checkmate(boards[-1][-1], checked_team - 1, logs[-1][-1]):
+                        #        return punctation[-1][0]
+                        #    if chess_assistance.stalemate(boards[-1][-1], checked_team - 1, logs[-1][-1]):
+                        #        if advantage(board, log)[team] <= advantage(board, log)[team - 1]:
+                        #            return punctation[-1][0]
+                        #        else:
+                        #            del punctation[-1]
+
+
+
+
+
+stare zapisywanie oceny pozycji
+#if level + 1 == depth:
+                        #    for evaluation in range(len(punctation)):
+                        #        if punctation[evaluation][0] == logs[-2][possibility][len(log)]:
+                        #            punctation[evaluation][-1].append(advantage(boards[-1][-1], logs[-1][-1])[checked_team] - advantage(boards[-1][-1], logs[-1][-1])[checked_team - 1])
+
+
+
+
+
+#stare przeglądanie wartości ruchów i wybieranie najlepszego
+#for evaluation in range(len(punctation)):
+    #    punctation[evaluation][-1] = [min(punctation[evaluation][-1]), sum(punctation[evaluation][-1]) / len(punctation[evaluation][-1])]
+    #while len(punctation) != 1:
+    #    if punctation[0][-1][0] > punctation[1][-1][0]:
+    #        del punctation[1]
+    #    elif punctation[0][-1][0] < punctation[1][-1][0]:
+    #        del punctation[0]
+    #    else:
+    #        if punctation[0][-1][1] > punctation[1][-1][1]:
+    #            del punctation[1]
+    #        else:
+    #            del punctation[0]
+    #return punctation[0][0]
+
+
+
+
+
+
+def renewing(team):
+    if team < 0:
+        if team % 2 == 0:
+            return 0
+        else:
+            return 1
+    return team
+
+
+
+#stare wprowadzanie promocji
+if len(moves.make(board, log[-1])) == 1:
+        #    board = moves.make(board, log[-1])[0]
+        #else:
+        #    promotion = input('Podaj nazwę figury jaką chcesz uzyskać w promocji. ').lower()
+        #    while not promotion in ['skoczek', 'goniec', 'wieża', 'hetman']:
+        #        promotion = input('Takiej figury nie możesz uzyskać w promocji, wpisz nazwę figury jeszcze raz. ').lower()
+        #    board = moves.make(board, log[-1])[['skoczek', 'goniec', 'wieża', 'hetman'].index(promotion)]
+
+
+
+
+#stary silnik tylko 2 ruchy do przodu bez promocji
+def best_move1(board, log, team, pieces_color):
+    #promocja
+
+    pieces1 = chess_assistance.team_positions(board, team)
+    punctation = []
+    #silnik
+    for piece1 in pieces1:
+        for move1 in moves.search(board, log, piece1, pieces_color):
+            punctation.append([[piece1, move1], []])
+            log1 = log + [[piece1, move1]]
+            board1 = moves.make(board, log1[-1])[-1]
+            pieces2 = chess_assistance.team_positions(board1, team - 1)
+            #przeciwnik
+            chess_assistance.write(board1, pieces_color)
+            for piece2 in pieces2:
+                for move2 in moves.search(board1, log1, piece2, pieces_color):
+                    punctation[-1][-1].append(advantage(moves.make(board1, [piece2, move2])[-1], log1 + [[piece2, move2]], pieces_color)[team] - advantage(moves.make(board1, [piece2, move2])[-1], log1 + [[piece2, move2]], pieces_color)[team - 1])
+            if team < 0:
+                team += 2
+            if chess_assistance.checkmate(board1, team - 1, log1, pieces_color):
+                return punctation[-1][0]
+            if chess_assistance.stalemate(board1, team - 1, log1, pieces_color):
+                if advantage(board, log, pieces_color)[team] <= advantage(board, log, pieces_color)[team - 1]:
+                    return punctation[-1][0]
+                else:
+                    del punctation[-1]
+            else:
+                punctation[-1][-1] = [min(punctation[-1][-1]), sum(punctation[-1][-1]) / len(punctation[-1][-1])]
+    while len(punctation) != 1:
+        if punctation[0][-1][0] > punctation[1][-1][0]:
+            del punctation[1]
+        elif punctation[0][-1][0] < punctation[1][-1][0]:
+            del punctation[0]
+        else:
+            if punctation[0][-1][1] > punctation[1][-1][1]:
+                del punctation[1]
+            else:
+                del punctation[0]
+    return punctation[0][0]
+
+
+
+
+stare ruchy królów
+        if piece[0] > 0:
+            if not board[piece[0] - 1][piece[1]] in [white_pieces, black_pieces][team]:
+                available_moves.append([piece[0] - 1, piece[1]])
+            if piece[1] > 0:
+                if not board[piece[0] - 1][piece[1] - 1] in [white_pieces, black_pieces][team]:
+                    available_moves.append([piece[0] - 1, piece[1] - 1])
+            if piece[1] < 7:
+                if not board[piece[0] - 1][piece[1] + 1] in [white_pieces, black_pieces][team]:
+                    available_moves.append([piece[0] - 1, piece[1] + 1])
+        if piece[0] < 7:
+            if not board[piece[0] + 1][piece[1]] in [white_pieces, black_pieces][team]:
+                available_moves.append([piece[0] + 1, piece[1]])
+            if piece[1] > 0:
+                if not board[piece[0] + 1][piece[1] - 1] in [white_pieces, black_pieces][team]:
+                    available_moves.append([piece[0] + 1, piece[1] - 1])
+            if piece[1] < 7:
+                if not board[piece[0] + 1][piece[1] + 1] in [white_pieces, black_pieces][team]:
+                    available_moves.append([piece[0] + 1, piece[1] + 1])
+        if piece[1] > 0:
+            if not board[piece[0]][piece[1] - 1] in [white_pieces, black_pieces][team]:
+                available_moves.append([piece[0], piece[1] - 1])
+        if piece[1] < 7:
+            if not board[piece[0]][piece[1] + 1] in [white_pieces, black_pieces][team]:
+                available_moves.append([piece[0], piece[1] + 1])
+
+
+
+stare ruchy wież i hetmanów
+        for move in range(piece[0]):
+            move += 1
+            if board[piece[0] - move][piece[1]] in [white_pieces, black_pieces][team]:
+                break
+            available_moves.append([piece[0] - move, piece[1]])
+            if board[piece[0] - move][piece[1]] in [white_pieces, black_pieces][team - 1]:
+                break
+        for move in range(piece[1]):
+            move += 1
+            if board[piece[0]][piece[1] - move] in [white_pieces, black_pieces][team]:
+                break
+            available_moves.append([piece[0], piece[1] - move])
+            if board[piece[0]][piece[1] - move] in [white_pieces, black_pieces][team - 1]:
+                break
+        for move in range(7 - piece[0]):
+            move += 1
+            if board[piece[0] + move][piece[1]] in [white_pieces, black_pieces][team]:
+                break
+            available_moves.append([piece[0] + move, piece[1]])
+            if board[piece[0] + move][piece[1]] in [white_pieces, black_pieces][team - 1]:
+                break
+        for move in range(7 - piece[1]):
+            move += 1
+            if board[piece[0]][piece[1] + move] in [white_pieces, black_pieces][team]:
+                break
+            available_moves.append([piece[0], piece[1] + move])
+            if board[piece[0]][piece[1] + move] in [white_pieces, black_pieces][team - 1]:
+                break
+
+
+
+stare skrucone ruchy gońców i hetmanów
+        for move in range(1, min(piece) + 1):
+            if board[piece[0] - move][piece[1] - move] in [white_pieces, black_pieces][team]:
+                break
+            available_moves.append([piece[0] - move, piece[1] - move])
+            if board[piece[0] - move][piece[1] - move] in [white_pieces, black_pieces][team - 1]:
+                break
+        for move in range(1, 8 - max(piece)):
+            if board[piece[0] + move][piece[1] + move] in [white_pieces, black_pieces][team]:
+                break
+            available_moves.append([piece[0] + move, piece[1] + move])
+            if board[piece[0] + move][piece[1] + move] in [white_pieces, black_pieces][team - 1]:
+                break
+
+        for move in range(1, min([7 - piece[0], piece[1]]) + 1):
+            if board[piece[0] + move][piece[1] - move] in [white_pieces, black_pieces][team]:
+                break
+            available_moves.append([piece[0] + move, piece[1] - move])
+            if board[piece[0] + move][piece[1] - move] in [white_pieces, black_pieces][team - 1]:
+                break
+        for move in range(1, min([piece[0], 7 - piece[1]]) + 1):
+            if board[piece[0] - move][piece[1] + move] in [white_pieces, black_pieces][team]:
+                break
+            available_moves.append([piece[0] - move, piece[1] + move])
+            if board[piece[0] - move][piece[1] + move] in [white_pieces, black_pieces][team - 1]:
+                break
+
+
+stare ruchy gońców i hetmanów
+        if piece[0] < piece[1]:
+            for move in range(piece[0]):
+                move += 1
+                if board[piece[0] - move][piece[1] - move] in [white_pieces, black_pieces][team]:
+                    break
+                available_moves.append([piece[0] - move, piece[1] - move])
+                if board[piece[0] - move][piece[1] - move] in [white_pieces, black_pieces][team - 1]:
+                    break
+            for move in range(7 - piece[1]):
+                move += 1
+                if board[piece[0] + move][piece[1] + move] in [white_pieces, black_pieces][team]:
+                    break
+                available_moves.append([piece[0] + move, piece[1] + move])
+                if board[piece[0] + move][piece[1] + move] in [white_pieces, black_pieces][team - 1]:
+                    break
+        else:
+            for move in range(piece[1]):
+                move += 1
+                if board[piece[0] - move][piece[1] - move] in [white_pieces, black_pieces][team]:
+                    break
+                available_moves.append([piece[0] - move, piece[1] - move])
+                if board[piece[0] - move][piece[1] - move] in [white_pieces, black_pieces][team - 1]:
+                    break
+            for move in range(7 - piece[0]):
+                move += 1
+                if board[piece[0] + move][piece[1] + move] in [white_pieces, black_pieces][team]:
+                    break
+                available_moves.append([piece[0] + move, piece[1] + move])
+                if board[piece[0] + move][piece[1] + move] in [white_pieces, black_pieces][team - 1]:
+                    break
+        if 7 - piece[0] < piece[1]:
+            for move in range(7 - piece[0]):
+                move += 1
+                if board[piece[0] + move][piece[1] - move] in [white_pieces, black_pieces][team]:
+                    break
+                available_moves.append([piece[0] + move, piece[1] - move])
+                if board[piece[0] + move][piece[1] - move] in [white_pieces, black_pieces][team - 1]:
+                    break
+            for move in range(7 - piece[1]):
+                move += 1
+                if board[piece[0] - move][piece[1] + move] in [white_pieces, black_pieces][team]:
+                    break
+                available_moves.append([piece[0] - move, piece[1] + move])
+                if board[piece[0] - move][piece[1] + move] in [white_pieces, black_pieces][team - 1]:
+                    break
+        else:
+            for move in range(piece[1]):
+                move += 1
+                if board[piece[0] + move][piece[1] - move] in [white_pieces, black_pieces][team]:
+                    break
+                available_moves.append([piece[0] + move, piece[1] - move])
+                if board[piece[0] + move][piece[1] - move] in [white_pieces, black_pieces][team - 1]:
+                    break
+            for move in range(piece[0]):
+                move += 1
+                if board[piece[0] - move][piece[1] + move] in [white_pieces, black_pieces][team]:
+                    break
+                available_moves.append([piece[0] - move, piece[1] + move])
+                if board[piece[0] - move][piece[1] + move] in [white_pieces, black_pieces][team - 1]:
+                    break
+
+
+
+
+stare sprawdzanie ruchów skoczka
+        if piece[0] > 0:
+            if piece[1] > 1:
+                if not board[piece[0] - 1][piece[1] - 2] in [white_pieces, black_pieces][team]:
+                    available_moves.append([piece[0] - 1, piece[1] - 2])
+            if piece[1] < 6:
+                if not board[piece[0] - 1][piece[1] + 2] in [white_pieces, black_pieces][team]:
+                    available_moves.append([piece[0] - 1, piece[1] + 2])
+        if piece[0] > 1:
+            if piece[1] > 0:
+                if not board[piece[0] - 2][piece[1] - 1] in [white_pieces, black_pieces][team]:
+                    available_moves.append([piece[0] - 2, piece[1] - 1])
+            if piece[1] < 7:
+                if not board[piece[0] - 2][piece[1] + 1] in [white_pieces, black_pieces][team]:
+                    available_moves.append([piece[0] - 2, piece[1] + 1])
+        if piece[0] < 6:
+            if piece[1] > 0:
+                if not board[piece[0] + 2][piece[1] - 1] in [white_pieces, black_pieces][team]:
+                    available_moves.append([piece[0] + 2, piece[1] - 1])
+            if piece[1] < 7:
+                if not board[piece[0] + 2][piece[1] + 1] in [white_pieces, black_pieces][team]:
+                    available_moves.append([piece[0] + 2, piece[1] + 1])
+        if piece[0] < 7:
+            if piece[1] > 1:
+                if not board[piece[0] + 1][piece[1] - 2] in [white_pieces, black_pieces][team]:
+                    available_moves.append([piece[0] + 1, piece[1] - 2])
+            if piece[1] < 6:
+                if not board[piece[0] + 1][piece[1] + 2] in [white_pieces, black_pieces][team]:
+                    available_moves.append([piece[0] + 1, piece[1] + 2])
+
+
+
+
+
+
+
+#return [[int(square / 8), square % 8] for square in range(64) if board[int(square / 8)][square % 8] in [white_pieces, black_pieces][team]]
+
+
+
+
+
+
+
+#for square in range(64):
+            #    if board[int(square / 8)][square % 8] in [white_pieces, black_pieces][team - 1]:
+            #        if board[int(square / 8)][square % 8] in [white_pieces[5], black_pieces[5]] and board[piece[0]][piece[1]] in [white_pieces[5], black_pieces[5]] and move in available_moves:
+            #            if [abs(int(square / 8) - move[0]), abs(square % 8 - move[1])] in [[0, 1], [1, 1], [1, 0]]:
+            #                available_moves[available_moves.index(move)] = ''
+            #        elif board[int(square / 8)][square % 8] != [white_pieces[5], black_pieces[5]][team - 1] and move in available_moves:
+            #            board[move[0]][move[1]], kopia = board[piece[0]][piece[1]], board[move[0]][move[1]]
+            #            board[piece[0]][piece[1]] = ''
+            #            if king in search(board, log, [int(square / 8), square % 8, 'verification'], pieces_color):
+            #                board[piece[0]][piece[1]] = board[move[0]][move[1]]
+            #                board[move[0]][move[1]] = kopia
+            #                available_moves[available_moves.index(move)] = ''
+            #            else:
+            #                board[piece[0]][piece[1]] = board[move[0]][move[1]]
+            #                board[move[0]][move[1]] = kopia
+
+
+
+
+
+
+
+
+
+
+
+
+    elif board_name == '1':
+        return [
+            ['♖', '♘', '♗', '♕', '♔', '', '♘', '♖'],
+            ['♙', '♙', '♙', '♙', '', '♙', '', '♙'],
+            ['', '', '', '', '♙', '', '♙', '♗'],
+            ['' for x in range(8)],
+            ['', '', '♝', '', '♟', '', '', ''],
+            ['', '', '', '', '', '♛', '', '♞'],
+            ['♟', '♟', '♟', '♟', '', '♟', '♟', '♟'],
+            ['♜', '♞', '♝', '', '♚', '', '', '♜']
+        ], [[[6, 4], [4, 4]], [[1, 6], [2, 6]], [[7, 3], [5, 5]], [[0, 5], [1, 6]], [[7, 5], [4, 2]], [[1, 4], [2, 4]], [[7, 6], [5, 7]], [[1, 6], [2, 7]]]
+
+
+#wyszukiwanie najlepszego ruchu 2 ruchy do przodu
+def najlepszy(szachownica, zapis_partii, druzyna, kolor_figur):
+    #promocja
+    #co jak mat/pat
+    figury1 = []
+    for rodzaj in [figury_biale, figury_czarne][druzyna]:
+        figury1 += pomoc.polorzenie_figur(szachownica, rodzaj)
+
+    punktacja = []
+    #silnik
+    for figura1 in figury1:
+        for ruch1 in moves.wyszukiwanie(szachownica, zapis_partii, figura1, kolor_figur):
+            punktacja.append([figura1, ruch1, []])
+            zapis_partii1 = zapis_partii + [[figura1, ruch1]]
+            szachownica1 = moves.wykonywanie(szachownica, zapis_partii1[-1])[0]
+            figury2 = []
+            for rodzaj in [figury_biale, figury_czarne][druzyna - 1]:
+                figury2 += pomoc.polorzenie_figur(szachownica1, rodzaj)
+            #print(figury2)
+            #przeciwnik
+            for figura2 in figury2:
+                for ruch2 in moves.wyszukiwanie(szachownica1, zapis_partii1, figura2, kolor_figur):
+                    zapis_partii2 = zapis_partii1 + [[figura2, ruch2]]
+                    szachownica2 = moves.wykonywanie(szachownica1, zapis_partii2[-1])[0]
+                    figury3 = []
+                    for rodzaj in [figury_biale, figury_czarne][druzyna]:
+                        figury3 += pomoc.polorzenie_figur(szachownica2, rodzaj)
+                    wypisywanie.wypisywanie(szachownica2, kolor_figur)
+                    print(figury3)
+                    #silnik
+                    for figura3 in figury3:
+                        for ruch3 in moves.wyszukiwanie(szachownica2, zapis_partii2, figura3, kolor_figur):
+                            punktacja[-1][-1].append(przewaga(moves.wykonywanie(szachownica2, [figura3, ruch3])[0], zapis_partii2, kolor_figur)[druzyna] - przewaga(moves.wykonywanie(szachownica2, [figura3, ruch3])[0], zapis_partii2, kolor_figur)[druzyna - 1])
+            punktacja[-1][-1] = sum(punktacja[-1][-1]) / len(punktacja[-1][-1])
+
+    while len(punktacja) != 1:
+        if punktacja[0][0] > punktacja[1][0]:
+            del punktacja[1]
+        else:
+            del punktacja[0]
+    return punktacja[0][1]
+
+
+#wyszukiwanie najlepszego ruchu nie myśli do przodu
+def najlepszy(szachownica, zapis_partii, druzyna, kolor_figur):
+    figury = []
+    for rodzaj in [figury_biale, figury_czarne][druzyna]:
+        figury += pomoc.polorzenie_figur(szachownica, rodzaj)
+
+    punktacja = []
+    for figura in figury:
+        for ruch in moves.wyszukiwanie(szachownica, zapis_partii, figura, kolor_figur):
+            punktacja.append([przewaga(moves.wykonywanie(szachownica, [figura, ruch])[0], zapis_partii, kolor_figur)[druzyna] - przewaga(moves.wykonywanie(szachownica, [figura, ruch])[0], zapis_partii, kolor_figur)[druzyna - 1], [figura, ruch]])
+
+    while len(punktacja) != 1:
+        if punktacja[0][0] > punktacja[1][0]:
+            del punktacja[1]
+        else:
+            del punktacja[0]
+    return punktacja[0][1]
+
+#stare ruchy bota bez defów
+y = 0
+        while y < 8:
+            for x in range(8):
+                if szachownica[y][x] in [figury_biale, figury_czarne][kolor_figur - 1]:
+                    if len(ruchy.wyszukiwanie(szachownica, zapis_partii, [y, x], kolor_figur)) > 0:
+                        zapis_partii.append([[y, x], ruchy.wyszukiwanie(szachownica, zapis_partii, [y, x], kolor_figur)[0]])
+                        if len(ruchy.wykonywanie(szachownica, zapis_partii[-1])) == 1:
+                            szachownica = ruchy.wykonywanie(szachownica, zapis_partii[-1])[0]
+                        else:
+                            print('dokończ leniu')
+                            #promocja piona
+                        y = 7
+            y += 1
+
+
+#stare wprowadzanie
+zapis_partii.append(input('Podaj swój ruch. ').lower())
+
+    while not zapis_partii[-1][0] in alfabet or not zapis_partii[-1][1] in liczby or not zapis_partii[-1][
+                                                                                             2] == ' ' or not \
+    zapis_partii[-1][3] in alfabet or not zapis_partii[-1][4] in liczby or len(zapis_partii[-1]) != 5:
+        zapis_partii[-1] = input('Niepoprawna nazwa pola, wpisz ją jeszcze raz. ')
+
+    if kolor_figur == 0:
+        zapis_partii[-1] = [[8 - int(zapis_partii[-1][1]), alfabet.index(zapis_partii[-1][0])],
+                            [8 - int(zapis_partii[-1][4]), alfabet.index(zapis_partii[-1][3])]]
+    else:
+        zapis_partii[-1] = [[int(zapis_partii[-1][1]) - 1, 7 - alfabet.index(zapis_partii[-1][0])],
+                            [int(zapis_partii[-1][4]) - 1, 7 - alfabet.index(zapis_partii[-1][3])]]
+    while not szachownica[zapis_partii[-1][0][0]][zapis_partii[-1][0][1]] in [figury_biale, figury_czarne][
+        kolor_figur] or not zapis_partii[-1][1] in ruchy.wyszukiwanie(szachownica, zapis_partii[:-1],
+                                                                      zapis_partii[-1][0], kolor_figur):
+        zapis_partii[-1] = input('Podany przez ciebie ruch jest niedostępny, wpisz swój ruch jeszcze raz. ')
+        while not zapis_partii[-1][0] in alfabet or not zapis_partii[-1][1] in liczby or not zapis_partii[-1][
+                                                                                                 2] == ' ' or not \
+        zapis_partii[-1][3] in alfabet or not zapis_partii[-1][4] in liczby:
+            zapis_partii[-1] = input('Niepoprawna nazwa pola, wpisz ją jeszcze raz. ')
+        if kolor_figur == 0:
+            zapis_partii[-1] = [[8 - int(zapis_partii[-1][1]), alfabet.index(zapis_partii[-1][0])],
+                                [8 - int(zapis_partii[-1][4]), alfabet.index(zapis_partii[-1][3])]]
+        else:
+            zapis_partii[-1] = [[int(zapis_partii[-1][1]) - 1, 7 - alfabet.index(zapis_partii[-1][0])],
+                                [int(zapis_partii[-1][4]) - 1, 7 - alfabet.index(zapis_partii[-1][3])]]
+
+
+
+#sprawdzanie czy król może się ruszyć na dane pola 1.0
+        for x in range(8):
+            for y in range(8):
+                if szachownica[x][y] in [figury_biale, figury_czarne][druzyna - 1]:
+                    if szachownica[x][y] == [figury_biale[5], figury_czarne[5]][druzyna - 1]:
+                        if [abs(x - pozycja[0]), abs(y - pozycja[1])] in [[0, 2], [1, 2], [2, 2], [2, 1], [2, 0]]:
+                            if abs(x - pozycja[0]) == 2:
+                                plus = 1
+                                if x - pozycja[0] < 0:
+                                    plus = -1
+
+                                if y - pozycja[1] in [-2, -1, 0]:
+                                    if [pozycja[0] + plus, pozycja[1] - 1] in dostepne_ruchy:
+                                        del dostepne_ruchy[dostepne_ruchy.index([pozycja[0] + plus, pozycja[1] - 1])]
+                                if abs(y - pozycja[1]) in [0, 1]:
+                                    if [pozycja[0] + plus, pozycja[1]] in dostepne_ruchy:
+                                        del dostepne_ruchy[dostepne_ruchy.index([pozycja[0] + plus, pozycja[1]])]
+                                if y - pozycja[1] in [0, 1, 2]:
+                                    if [pozycja[0] + plus, pozycja[1] + 1] in dostepne_ruchy:
+                                        del dostepne_ruchy[dostepne_ruchy.index([pozycja[0] + plus, pozycja[1] + 1])]
+
+                            else:
+                                plus = 1
+                                if y - pozycja[1] < 0:
+                                    plus = -1
+
+                                if x - pozycja[0] in [-2, -1, 0]:
+                                    if [pozycja[0] - 1, pozycja[1] + plus] in dostepne_ruchy:
+                                        del dostepne_ruchy[dostepne_ruchy.index([pozycja[0] - 1, pozycja[1] + plus])]
+                                if abs(x - pozycja[0]) in [0, 1]:
+                                    if [pozycja[0], pozycja[1] + plus] in dostepne_ruchy:
+                                        del dostepne_ruchy[dostepne_ruchy.index([pozycja[0], pozycja[1] + plus])]
+                                if x - pozycja[0] in [0, 1, 2]:
+                                    if [pozycja[0] + 1, pozycja[1] + plus] in dostepne_ruchy:
+                                        del dostepne_ruchy[dostepne_ruchy.index([pozycja[0] + 1, pozycja[1] + plus])]
+                    else:
+                        #brane jest pod uwagę jako bicie ruch piona do przodu a co za tym idzie w do zrobienie nie powinien być taki ruch możliwy i król może podejść na pola które atakuje pion
+                        for z in range(len(dostepne_ruchy)):
+                            if dostepne_ruchy[z] in ruchy(szachownica, zapis_partii, [x, y], druzyna - 1):
+                                dostepne_ruchy[z] = ''
+
+#stare sprawdzanie poprawności wprowadzonego ruchu pod względem pisowni
+        bramka = 2
+        while bramka == 1 or bramka == 2:
+            if bramka == 2:
+                zapis_partii.append(input('Podaj swój ruch. '))
+            else:
+                zapis_partii[-1] = input('Na podanym przez ciebie polu nie znajduje się twoja figura, wpisz nazwę pola jeszcze raz. ')
+            bramka = 0
+
+            while not zapis_partii[-1][0] in alfabet or not zapis_partii[-1][1] in liczby or not zapis_partii[-1][2] == ' ' or not zapis_partii[-1][3] in alfabet or not zapis_partii[-1][4] in liczby:
+                zapis_partii[-1] = input('Niepoprawna nazwa pola, wpisz ją jeszcze raz. ')
+
+            zapis_partii[-1] = [[8 - int(zapis_partii[-1][1]), alfabet.index(zapis_partii[-1][0])], [8 - int(zapis_partii[-1][4]), alfabet.index(zapis_partii[-1][3])]]
+            print(ruchy.ruchy(szachownica, zapis_partii, zapis_partii[-1][0], kolor_figur))
+            print(kolor_figur)
+            while not szachownica[zapis_partii[-1][0][0]][zapis_partii[-1][0][1]] in [figury_biale, figury_czarne][kolor_figur] or not zapis_partii[-1][1] in ruchy.ruchy(szachownica, zapis_partii, zapis_partii[-1][0], kolor_figur):
+                zapis_partii[-1] = input('Podany przez ciebie ruch jest niedostępny, wpisz swój ruch jeszcze raz. ')
+                while not zapis_partii[-1][0] in alfabet or not zapis_partii[-1][1] in liczby or not zapis_partii[-1][2] == ' ' or not zapis_partii[-1][3] in alfabet or not zapis_partii[-1][4] in liczby:
+                    zapis_partii[-1] = input('Niepoprawna nazwa pola, wpisz ją jeszcze raz. ')
+                zapis_partii[-1] = [[8 - int(zapis_partii[-1][1]), alfabet.index(zapis_partii[-1][0])], [8 - int(zapis_partii[-1][4]), alfabet.index(zapis_partii[-1][3])]]
+
+#sprawdzanie czy król może się ruszyć na dane pola 2.0
+        for x in range(len(dostepne_ruchy)):
+            for y in range(8):
+                for z in range(8):
+                    if szachownica[y][z] in [figury_biale, figury_czarne][druzyna - 1]:
+                        if szachownica[y][z] == [figury_biale[5], figury_czarne[5]][druzyna - 1]:
+                            if [abs(y - dostepne_ruchy[x][0]), abs(z - dostepne_ruchy[x][1])] in [[0, 1], [1, 1], [1, 0]]:
+                                dostepne_ruchy[x] = ''
+                        else:
+                            szachownica[dostepne_ruchy[x][0]][dostepne_ruchy[x][1]] = szachownica[pozycja[0]][pozycja[1]]
+                            szachownica[pozycja[0]][pozycja[1]] = ''
+                            if dostepne_ruchy[x] in wyszukiwanie(szachownica, zapis_partii, [y, z], druzyna - 1):
+                                szachownica[pozycja[0]][pozycja[1]] = szachownica[dostepne_ruchy[x][0]][dostepne_ruchy[x][1]]
+                                szachownica[dostepne_ruchy[x][0]][dostepne_ruchy[x][1]] = ''
+                                dostepne_ruchy[x] = ''

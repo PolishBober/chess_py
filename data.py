@@ -1,0 +1,5 @@
+alphabet = [chr(97 + x) for x in range(8)]
+numbers = [str(x + 1) for x in range(8)]
+white_pieces = ['♟', '♞', '♝', '♜', '♛', '♚']
+black_pieces = ['♙', '♘', '♗', '♖', '♕', '♔']
+squares = ['⬛', '□']
