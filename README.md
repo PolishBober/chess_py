@@ -1,5 +1,7 @@
 # Legacy Python Chess Engine (Middle School Archive)
 
+*Note: This is a personal archive project. For my current work please check my other repositories.*
+
 This repository contains a fully functional chess engine I built from scratch in Python during 6th and 7th grade, with a few minor tweaks added in my first year of high school. 
 
 ### Technical Overview
